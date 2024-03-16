@@ -20,23 +20,39 @@ namespace BuildNumber
         {
             _logger.LogInformation("Next build number requested for id: '{id}'", id);
 
-            string connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!;
-            using SqlConnection connection = new (connectionString);
-            connection.Open();
-            using SqlCommand readCommand = new ("SELECT BuildNumber FROM [dbo].[build_numbers] WITH(ROWLOCK) WHERE BuildIdentifier = @id", connection);
-            readCommand.Parameters.AddWithValue("@id", id);
-            int nextBuildNumber = (int)readCommand.ExecuteScalar() + 1;
-            using SqlCommand updateCommand = new("UPDATE [dbo].[build_numbers] WITH(ROWLOCK) SET BuildNumber = @nextBuildNumber WHERE BuildIdentifier = @id", connection);
-            updateCommand.Parameters.AddWithValue("@nextBuildNumber", nextBuildNumber);
-            updateCommand.Parameters.AddWithValue("@id", id);
-            updateCommand.ExecuteNonQuery();
-            _logger.LogInformation("Next build number for id: '{id}' is {nextBuildNumber}", id, nextBuildNumber);
-            return new OkObjectResult($$"""
+            try
             {
-                "buildId": "{{id}}",
-                "buildNumber": {{nextBuildNumber}},
+                string connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!;
+                _logger.LogInformation("Connection string read: {connStringrRead}",
+                    !string.IsNullOrEmpty(connectionString));
+                using SqlConnection connection = new(connectionString);
+                connection.Open();
+                _logger.LogInformation("DB connection opened");
+                using SqlCommand readCommand =
+                    new("SELECT BuildNumber FROM [dbo].[build_numbers] WITH(ROWLOCK) WHERE BuildIdentifier = @id",
+                        connection);
+                readCommand.Parameters.AddWithValue("@id", id);
+                int nextBuildNumber = (int) readCommand.ExecuteScalar() + 1;
+                using SqlCommand updateCommand =
+                    new(
+                        "UPDATE [dbo].[build_numbers] WITH(ROWLOCK) SET BuildNumber = @nextBuildNumber WHERE BuildIdentifier = @id",
+                        connection);
+                updateCommand.Parameters.AddWithValue("@nextBuildNumber", nextBuildNumber);
+                updateCommand.Parameters.AddWithValue("@id", id);
+                updateCommand.ExecuteNonQuery();
+                _logger.LogInformation("Next build number for id: '{id}' is {nextBuildNumber}", id, nextBuildNumber);
+                return new OkObjectResult($$"""
+                                            {
+                                                "buildId": "{{id}}",
+                                                "buildNumber": {{nextBuildNumber}},
+                                            }
+                                            """);
             }
-            """);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while getting next build number for id: '{id}'", id);
+                return new StatusCodeResult(500);
+            }
         }
     }
 }
