@@ -6,8 +6,15 @@ using Microsoft.Extensions.Logging;
 
 namespace BuildNumberAdmin
 {
-    public class Function1(ILogger<Function1> logger)
+    public class Function1
     {
+        private readonly ILogger<Function1> _logger;
+
+        public Function1(ILogger<Function1> logger)
+        {
+            _logger = logger;
+        }
+
         [Function("BuildNumberAdmin")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "set/{id}")] HttpRequest req, string id)
         {
@@ -15,7 +22,7 @@ namespace BuildNumberAdmin
             if (!int.TryParse(newValueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int newValue))
                 return new BadRequestObjectResult("Invalid build number. Only integers are allowed");
 
-            logger.LogInformation("Build number set to {newValue} for id: '{id}'", newValue, id);
+            _logger.LogInformation("Build number set to {newValue} for id: '{id}'", newValue, id);
             return new OkObjectResult($"Set next build number for {id} to {newValue}");
         }
     }
