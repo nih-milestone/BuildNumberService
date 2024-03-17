@@ -32,10 +32,17 @@ runs:
           -Headers @{'x-functions-key' = '${{ inputs.api-key }}'}
 
         $BuildNumber = -1
-        if ($Response.StatusCode -eq 200)
+        try
         {
-          $Json = ConvertFrom-Json $([String]::new($Response.Content))
-          $BuildNumber = $Json.buildNumber
+          if ($Response.StatusCode -eq 200)
+          {
+            $Json = ConvertFrom-Json $([String]::new($Response.Content))
+            $BuildNumber = $Json.buildNumber
+          }
+        }
+        catch
+        {
+          # Ignore, fallback to default
         }
         echo "TEMP_BUILD_NUMBER=$BuildNumber" >> $env:GITHUB_ENV
 
@@ -47,3 +54,8 @@ runs:
         echo "SUCCESS=${{ env.TEMP_BUILD_NUMBER == '-1' && 'false' || 'true' }}" >> $env:GITHUB_OUTPUT
         echo "BUILD_IDENTIFIER=${{ inputs.build-identifier }}" >> $env:GITHUB_OUTPUT
         echo "BUILD_NUMBER=$env:TEMP_BUILD_NUMBER" >> $env:GITHUB_OUTPUT
+
+    - name: Set action status
+      if: ${{ env.TEMP_BUILD_NUMBER == '-1' }}
+      shell: pwsh
+      run: exit 1

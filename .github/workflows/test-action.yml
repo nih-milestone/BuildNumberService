@@ -15,6 +15,7 @@ jobs:
     - name: Get next build number
       uses: ./.github/actions/get-next-build-number
       id: get-build-number
+      continue-on-error: true
       with:
         api-key: ${{ secrets.BUILD_NUMBER_SERVICE_API_KEY }}
         build-identifier: 'xpco-24.1'
