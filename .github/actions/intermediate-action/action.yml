@@ -1,0 +1,39 @@
+name: Get next build number
+description: "Gets the next build number for a particular build identifier"
+
+inputs:
+  api-key:
+    description: "API key needed to authenticate with the build number service"
+    required: true
+  build-identifier:
+    description: "The build identifier for which to get the next build number"
+    required: true
+
+outputs:
+  success:
+    description: "Indicates whether a build number was successfully fetched or not"
+    value: ${{ steps.write-outputs.outputs.SUCCESS }}
+  build-identifier:
+    description: "Start time"
+    value: ${{ steps.write-outputs.outputs.BUILD_IDENTIFIER }}     
+  build-number:
+    description: "Start time"
+    value: ${{ steps.write-outputs.outputs.BUILD_NUMBER }}     
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get next build number
+      uses: ./.github/actions/get-next-build-number
+      id: get-build-number
+      continue-on-error: true
+      with:
+        api-key: ${{ inputs.api-key }}
+        build-identifier: ${{ inputs.build-identifier }}
+
+    - name: Print build number
+      shell: pwsh
+      run: |
+        echo "Success: ${{ steps.get-build-number.outputs.success }}"
+        echo "Build identifier: ${{ steps.get-build-number.outputs.build-identifier }}"
+        echo "Build number: ${{ steps.get-build-number.outputs.build-number }}"

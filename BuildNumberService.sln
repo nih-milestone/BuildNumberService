@@ -16,6 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "get-next-build-number", "ge
 		.github\actions\get-next-build-number\action.yml = .github\actions\get-next-build-number\action.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "intermediate-action", "intermediate-action", "{56EFB8EE-544F-43CF-A90F-6AF15D561957}"
+	ProjectSection(SolutionItems) = preProject
+		.github\actions\intermediate-action\action.yml = .github\actions\intermediate-action\action.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +45,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EF0A2EFA-4269-47D9-80F4-84A614575FFC} = {3D248CDE-F0DE-4D03-9179-8061E437E30B}
+		{56EFB8EE-544F-43CF-A90F-6AF15D561957} = {3D248CDE-F0DE-4D03-9179-8061E437E30B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EAABBEA4-2626-4C08-9168-D3F3A1BC441C}

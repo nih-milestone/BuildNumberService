@@ -1,0 +1,25 @@
+name: Test nested get-next-build-number action
+on:
+  workflow_dispatch:
+    inputs:
+      build-identifier:
+        description: "The build identifier for which to get the next build number"
+        required: true
+        type: string
+        default: 'xpco-24.1'
+
+jobs:
+  get-next-build--number:
+    name: "Get next build number"
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Get next build number
+      uses: ./.github/actions/intermediate-action
+      with:
+        api-key: ${{ secrets.BUILD_NUMBER_SERVICE_API_KEY }}
+        build-identifier: ${{ inputs.build-identifier }}
