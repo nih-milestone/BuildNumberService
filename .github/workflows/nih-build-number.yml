@@ -29,7 +29,7 @@ jobs:
       run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
 
     - name: Test
-      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --no-restore
+      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --no-restore --logger GitHubActions
 
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
