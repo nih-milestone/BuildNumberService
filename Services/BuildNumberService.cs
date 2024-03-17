@@ -7,6 +7,25 @@ namespace Services;
 public class BuildNumberService(ILogger<BuildNumberService> logger, DatabaseConnectionInfo connectionInfo)
 {
 
+    public async Task<Result<bool>> ResetAsync()
+    {
+        try
+        {
+            await using SqlConnection connection = new(connectionInfo.ConnectionString);
+            await connection.OpenAsync();
+            await using SqlCommand createCommand = new("DROP TABLE IF EXISTS [dbo].[build_numbers]; CREATE TABLE [dbo].[build_numbers] (ID INT IDENTITY(1,1) PRIMARY KEY, BuildIdentifier VARCHAR(255) NOT NULL, BuildNumber INT NOT NULL DEFAULT 0)", connection);
+            await createCommand.ExecuteNonQueryAsync();
+            logger.LogInformation("Reset service");
+            return Result<bool>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.ToString());
+            logger.LogError(ex, "Error while resetting service\n{exception}", ex.ToString());
+            return Result<bool>.Failure(new Error("DB_ERROR", ex.Message));
+        }
+    }
+
     public async Task<Result<bool>> InitializeBuildIdentifier(string id)
     {
         try
