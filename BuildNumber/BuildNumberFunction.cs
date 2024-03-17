@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BuildNumber
 {
-    public class Function1(ILogger<Function1> logger)
+    public class BuildNumberFunction(ILogger<BuildNumberFunction> logger)
     {
-        [Function("BuildNumber")]
+        [Function(nameof(BuildNumberFunction))]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "next/{id}")] HttpRequest req, string id)
         {
             logger.LogInformation("Next build number requested for id: '{id}'", id);
