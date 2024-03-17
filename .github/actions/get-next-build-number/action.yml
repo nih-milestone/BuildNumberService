@@ -10,14 +10,13 @@ outputs:
   build-identifier:
     description: "Start time"
     value: ${{ steps.write-outputs.outputs.BUILD_IDENTIFIER }}     
-build-number:
+  build-number:
     description: "Start time"
     value: ${{ steps.write-outputs.outputs.BUILD_NUMBER }}     
 
 runs:
   using: "composite"
   steps:
-  
     - name: Fetch build number
       shell: pwsh
       run: |
