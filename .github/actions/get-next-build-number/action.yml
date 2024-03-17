@@ -1,0 +1,33 @@
+name: Get next build number
+description: "Gets the next build number for a particular build identifier"
+
+inputs:
+  build-identifier:
+    type: string
+    required: true
+
+outputs:
+  build-identifier:
+    description: "Start time"
+    value: ${{ steps.write-outputs.outputs.BUILD_IDENTIFIER }}     
+build-number:
+    description: "Start time"
+    value: ${{ steps.write-outputs.outputs.BUILD_NUMBER }}     
+
+runs:
+  using: "composite"
+  steps:
+  
+    - name: Fetch build number
+      shell: pwsh
+      run: |
+        # Fetch the build number from the build number service
+        echo "TEMP_BUILD_NUMBER=12345" >> $env:GITHUB_ENV
+
+    - name: Write outputs
+      id: write-outputs
+      shell: pwsh
+      run: |
+        # Write action outputs
+        echo "BUILD_IDENTIFIER=${{ inputs.build-identifier }}" >> $env:GITHUB_OUTPUT
+        echo "BUILD_NUMBER=$env:TEMP_BUILD_NUMBER" >> $env:GITHUB_OUTPUT

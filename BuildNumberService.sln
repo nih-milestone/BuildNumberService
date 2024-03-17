@@ -7,9 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildNumberAdmin", "BuildNu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildNumber", "BuildNumber\BuildNumber.csproj", "{19DE8D20-8361-42F1-A6A7-46F4A87B8382}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{D2C03A1B-FEF5-45A2-B60B-26C458C36042}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{D2C03A1B-FEF5-45A2-B60B-26C458C36042}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Tests", "Services.Tests\Services.Tests.csproj", "{78708C14-10A7-4B4D-B3F4-FA9A96F96468}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Tests", "Services.Tests\Services.Tests.csproj", "{78708C14-10A7-4B4D-B3F4-FA9A96F96468}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{3D248CDE-F0DE-4D03-9179-8061E437E30B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "get-next-build-number", "get-next-build-number", "{EF0A2EFA-4269-47D9-80F4-84A614575FFC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\actions\get-next-build-number\action.yml = .github\actions\get-next-build-number\action.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF0A2EFA-4269-47D9-80F4-84A614575FFC} = {3D248CDE-F0DE-4D03-9179-8061E437E30B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EAABBEA4-2626-4C08-9168-D3F3A1BC441C}

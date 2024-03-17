@@ -1,0 +1,23 @@
+name: Test get-next-build-number action
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Get next build number
+      uses: ./.github/actions/get-next-build-number
+      id: get-build-number
+      with:
+        build-identifier: 'xpco-24.1'
+
+    - name: Print build number
+      run: |
+        echo "Build identifier: ${{ steps.get-build-number.outputs.build-identifier }}"
+        echo "Build number: ${{ steps.get-build-number.outputs.build-number }}"
