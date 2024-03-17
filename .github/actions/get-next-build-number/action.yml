@@ -2,11 +2,17 @@ name: Get next build number
 description: "Gets the next build number for a particular build identifier"
 
 inputs:
+  api-key:
+    description: "API key needed to authenticate with the build number service"
+    required: true
   build-identifier:
-    type: string
+    description: "The build identifier for which to get the next build number"
     required: true
 
 outputs:
+  success:
+    description: "Indicates whether a build number was successfully fetched or not"
+    value: ${{ steps.write-outputs.outputs.SUCCESS }}
   build-identifier:
     description: "Start time"
     value: ${{ steps.write-outputs.outputs.BUILD_IDENTIFIER }}     
@@ -21,12 +27,23 @@ runs:
       shell: pwsh
       run: |
         # Fetch the build number from the build number service
-        echo "TEMP_BUILD_NUMBER=12345" >> $env:GITHUB_ENV
+        $Url = "https://nih-build-number.azurewebsites.net/api/next/${{ inputs.build-identifier }}"
+        $Response = Invoke-WebRequest -Uri "$Url" -Method Get -ContentType "application/json" `
+          -Headers @{'x-functions-key' = '${{ inputs-api-key }}'}
+
+        $BuildNumber = -1
+        if ($Response.StatusCode -eq 200)
+        {
+          $Json = ConvertFrom-Json $([String]::new($Response.Content))
+          $$BuildNumber = $Json.buildNumber
+        }
+        echo "TEMP_BUILD_NUMBER=$BuildNumber" >> $env:GITHUB_ENV
 
     - name: Write outputs
       id: write-outputs
       shell: pwsh
       run: |
         # Write action outputs
+        echo "SUCCESS=${{ env.TEMP_BUILD_NUMBER == '-1' && 'false' || 'true' }}" >> $env:GITHUB_OUTPUT
         echo "BUILD_IDENTIFIER=${{ inputs.build-identifier }}" >> $env:GITHUB_OUTPUT
         echo "BUILD_NUMBER=$env:TEMP_BUILD_NUMBER" >> $env:GITHUB_OUTPUT
