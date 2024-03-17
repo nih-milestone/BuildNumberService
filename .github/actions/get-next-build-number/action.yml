@@ -42,7 +42,7 @@ runs:
         }
         catch
         {
-          # Ignore, fallback to default
+          # Ignore, fallback to default indicating failure
         }
         echo "TEMP_BUILD_NUMBER=$BuildNumber" >> $env:GITHUB_ENV
 
