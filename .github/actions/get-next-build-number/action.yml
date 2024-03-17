@@ -27,13 +27,13 @@ runs:
       shell: pwsh
       run: |
         # Fetch the build number from the build number service
-        $Url = "https://nih-build-number.azurewebsites.net/api/next/${{ inputs.build-identifier }}"
-        $Response = Invoke-WebRequest -Uri "$Url" -Method Get -ContentType "application/json" `
-          -Headers @{'x-functions-key' = '${{ inputs.api-key }}'}
-
         $BuildNumber = -1
         try
         {
+          $Url = "https://nih-build-number.azurewebsites.net/api/next/${{ inputs.build-identifier }}"
+          $Response = Invoke-WebRequest -Uri "$Url" -Method Get -ContentType "application/json" `
+            -Headers @{'x-functions-key' = '${{ inputs.api-key }}'}
+
           if ($Response.StatusCode -eq 200)
           {
             $Json = ConvertFrom-Json $([String]::new($Response.Content))
