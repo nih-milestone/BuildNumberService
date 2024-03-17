@@ -38,7 +38,7 @@ public class BuildNumberServiceTests
     {
         // Arrange
         const string id = "concurrent-test";
-        const int concurrentCalls = 10;
+        const int concurrentCalls = 100;
         await BuildNumberService.ResetAsync();
         await BuildNumberService.InitializeBuildIdentifier(id);
 
