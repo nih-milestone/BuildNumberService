@@ -75,4 +75,24 @@ public class BuildNumberServiceTests
         Assert.AreEqual(1, value1.Value);
         Assert.AreEqual(101, value2.Value);
     }
+
+    [TestMethod]
+    public async Task SetBuildNumberForBuildIdentifierAsync_ShouldNotUpdateBuildNumber_WhenBuildNumberIsLessThanCurrentValue()
+    {
+        // Arrange
+        const string id = "set-number-test";
+        await BuildNumberService.ResetAsync();
+        await BuildNumberService.InitializeBuildIdentifier(id);
+        await BuildNumberService.SetBuildNumberForBuildIdentifierAsync(id, 100);
+
+        // Act
+        Result<int> value1 = await BuildNumberService.GetNextBuildNumberAsync(id);
+        Result<bool> result = await BuildNumberService.SetBuildNumberForBuildIdentifierAsync(id, 10);
+        Result<int> value2 = await BuildNumberService.GetNextBuildNumberAsync(id);
+
+        // Assert
+        Assert.AreEqual(101, value1.Value);
+        Assert.IsTrue(result.IsFailure);
+        Assert.AreEqual(102, value2.Value);
+    }
 }
