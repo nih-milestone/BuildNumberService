@@ -8,6 +8,10 @@ inputs:
   build-identifier:
     description: "The build identifier for which to get the next build number"
     required: true
+  max-attempts:
+    description: "The build identifier for which to get the next build number"
+    required: false
+    default: '3'    
 
 outputs:
   success:
@@ -28,21 +32,34 @@ runs:
       run: |
         # Fetch the build number from the build number service
         $BuildNumber = -1
-        try
-        {
-          $Url = "https://nih-build-number.azurewebsites.net/api/next/${{ inputs.build-identifier }}"
-          $Response = Invoke-WebRequest -Uri "$Url" -Method Get -ContentType "application/json" `
-            -Headers @{'x-functions-key' = '${{ inputs.api-key }}'}
-
-          if ($Response.StatusCode -eq 200)
+        $Completed = $false
+        $RetryCount = 0
+        while (-not $Completed) {
+          try
           {
-            $Json = ConvertFrom-Json $([String]::new($Response.Content))
-            $BuildNumber = $Json.buildNumber
+            $Url = "https://nih-build-number.azurewebsites.net/api/next/${{ inputs.build-identifier }}"
+            $Response = Invoke-WebRequest -Uri "$Url" -Method Get -ContentType "application/json" `
+              -Headers @{'x-functions-key' = '${{ inputs.api-key }}'}
+
+            if ($Response.StatusCode -eq 200)
+            {
+              $Json = ConvertFrom-Json $([String]::new($Response.Content))
+              $BuildNumber = $Json.buildNumber
+              Write-Host "WebRequest completed successfully!"
+            }
+            $Completed = $true
           }
-        }
-        catch
-        {
-          # Ignore, fallback to default indicating failure
+          catch
+          {
+            # Ignore, retry or fallback to default indicating failure
+            $RetryCount++
+            if ($RetryCount -ge ${{ inputs.max-attempts }})
+            {
+              Write-Host "WebRequest failed, giving up!"
+              throw
+            }
+            Write-Host "WebRequest failed, retrying..."
+          }
         }
         echo "TEMP_BUILD_NUMBER=$BuildNumber" >> $env:GITHUB_ENV
 
